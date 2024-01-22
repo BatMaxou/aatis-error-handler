@@ -7,25 +7,33 @@ use Aatis\ErrorHandler\Interface\ErrorHandlerInterface;
 
 class ErrorHandler implements ErrorHandlerInterface
 {
-    public function __construct(private LoggerInterface $logger)
+    private const LOG_PATERN = '[%s] %s - %s:%s';
+
+    public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
-    public static function initialize(): void
+    public static function initialize(LoggerInterface $logger): void
     {
-        ini_set('display_errors', '1');
+        $errorHandler = new self($logger);
+
         error_reporting(E_ALL);
-        set_error_handler([self::class, 'handleError']);
-        set_exception_handler([self::class, 'handleException']);
+        ini_set('display_errors', 1);
+        set_error_handler([$errorHandler, 'handleError']);
+        set_exception_handler([$errorHandler, 'handleException']);
     }
 
-    public function handleError(int $level, string $message, string $file, int $line): void
+    public function handleError(int $level, string $message, string $file, int $line): bool
     {
-        echo "Error";
+        $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
+
+        exit;
     }
 
-    public function handleException(\Exception $exception): void
+    public function handleException(\Throwable $exception): void
     {
-        echo "Exception";
+        $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
+
+        exit;
     }
 }
