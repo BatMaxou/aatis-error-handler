@@ -27,6 +27,16 @@ class ErrorHandler implements ErrorHandlerInterface
     {
         $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
 
+        $this->render([
+            'title' => 'Error',
+            'code' => $level,
+            'level' => $level,
+            'file' => $file,
+            'line' => $line,
+            'message' => $message,
+            'trace' => debug_backtrace(),
+        ]);
+
         exit;
     }
 
@@ -34,6 +44,35 @@ class ErrorHandler implements ErrorHandlerInterface
     {
         $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
 
+        $this->render([
+            'title' => 'Exception',
+            'code' => (string) $exception->getCode(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'message' => $exception->getMessage(),
+            'previous' => $exception->getPrevious(),
+            'trace' => $exception->getTrace(),
+        ]);
+
         exit;
+    }
+
+    private function render(array $data = []): void
+    {
+        $dataTemplate = [
+            'title' => 'Notice',
+            'code' => null,
+            'level' => null,
+            'file' => null,
+            'line' => null,
+            'message' => null,
+            'previous' => null,
+            'trace' => null,
+        ];
+
+        extract($dataTemplate);
+        extract($data);
+
+        require_once __DIR__ . '/../../templates/error.tpl.php';
     }
 }
