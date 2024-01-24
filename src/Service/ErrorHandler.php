@@ -27,14 +27,16 @@ class ErrorHandler implements ErrorHandlerInterface
     {
         $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
 
+        $trace = $this->getTraceWithContext($file, $line, debug_backtrace());
+
         $this->render([
-            'title' => 'Error',
+            'type' => 'Error',
             'code' => $level,
             'level' => $level,
             'file' => $file,
             'line' => $line,
             'message' => $message,
-            'trace' => debug_backtrace(),
+            'trace' => $trace,
         ]);
 
         exit;
@@ -44,14 +46,21 @@ class ErrorHandler implements ErrorHandlerInterface
     {
         $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
 
+        $trace = $this->getTraceWithContext($exception->getFile(), $exception->getLine(), $exception->getTrace());
+
+        $class = $exception::class;
+        $exploded = explode('\\', $class);
+
         $this->render([
-            'title' => 'Exception',
+            'type' => 'Exception',
+            'class' => $class,
+            'name' => end($exploded),
             'code' => (string) $exception->getCode(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'message' => $exception->getMessage(),
             'previous' => $exception->getPrevious(),
-            'trace' => $exception->getTrace(),
+            'trace' => $trace,
         ]);
 
         exit;
@@ -60,7 +69,9 @@ class ErrorHandler implements ErrorHandlerInterface
     private function render(array $data = []): void
     {
         $dataTemplate = [
-            'title' => 'Notice',
+            'type' => null,
+            'class' => null,
+            'name' => null,
             'code' => null,
             'level' => null,
             'file' => null,
@@ -74,5 +85,41 @@ class ErrorHandler implements ErrorHandlerInterface
         extract($data);
 
         require_once __DIR__ . '/../../templates/error.tpl.php';
+    }
+
+    private function getTraceWithContext(string $file, int $line, array $baseTrace): array
+    {
+        return array_map(
+            fn ($step) => [...$step, 'context' => $this->getStepContext($step)],
+            array_merge(
+                [['file' => $file, 'line' => $line, 'isMain' => true]],
+                $baseTrace
+            )
+        );
+    }
+
+    private function getStepContext(array $trace): array
+    {
+        $traceContext = [];
+        $file = fopen($trace['file'], "r");
+        $line_number = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
+
+        for ($i = 1; $i < $line_number; $i++) {
+            fgets($file);
+        }
+
+        while ($line_number < $trace['line'] + 6 && !feof($file)) {
+            $line = fgets($file);
+
+            if ($line) {
+                $traceContext[$line_number] = $line;
+            }
+
+            $line_number++;
+        }
+
+        fclose($file);
+
+        return $traceContext;
     }
 }
