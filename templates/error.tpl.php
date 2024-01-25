@@ -15,7 +15,7 @@
         </div>
         <div class="errorInfos">
             <p class="subText"><?php echo 'Code' . ($code ?? $level) ?>
-            <p class="subText"><?php echo 'Enum Category Error/Exception' ?>
+            <p class="subText"><?php echo $description ?>
         </div>
     </div>
 
