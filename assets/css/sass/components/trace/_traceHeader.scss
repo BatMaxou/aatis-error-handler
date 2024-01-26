@@ -1,0 +1,32 @@
+.trace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $gray;
+    padding: 10px 20px;
+    cursor: pointer;
+
+    .title {
+        max-width: 90%;
+        overflow: hidden;
+
+        .detail-text {
+            color: $darkGray;
+        }
+    }
+
+    .chevron {
+        width: 20px;
+        height: 20px;
+        transition: rotate .4s ease-out;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        &.active {
+            rotate: 180deg;
+        }
+    }
+}

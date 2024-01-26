@@ -1,0 +1,18 @@
+// COLORS
+$black: #2A2A2A;
+
+$white: #FFF;
+
+$gray: #D9D9D9;
+$darkGray: #888;
+
+$red: #C50000;
+$darkRed: #AB0202;
+$transparentRed: rgba($red, 0.3);
+
+// CONTENT
+$contentPourcentageWidth: 80%;
+$inlineContentPadding: calc((100% - $contentPourcentageWidth) / 2);
+$contentMaxWidth: 1200px;
+$contentWidth: min($contentPourcentageWidth, $contentMaxWidth);
+$borderRadius: 10px;
