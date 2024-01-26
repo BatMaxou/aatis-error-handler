@@ -6,8 +6,14 @@ use Aatis\ErrorHandler\Interface\CodeBagInterface;
 
 abstract class AbstractCodeBag implements CodeBagInterface
 {
+    /**
+     * @var array<class-string>
+     */
     private array $codeEnums = [];
 
+    /**
+     * @param array<class-string> $extraCodeEnums
+     */
     public function __construct(private readonly array $extraCodeEnums = [])
     {
         if (!empty($extraCodeEnums)) {
@@ -21,7 +27,7 @@ abstract class AbstractCodeBag implements CodeBagInterface
 
         foreach ($this->codeEnums as $exceptionCodeEnum) {
             foreach ($exceptionCodeEnum::cases() as $case) {
-                if ('_' . $code === $case->name) {
+                if ('_'.$code === $case->name) {
                     $description = $case->value;
                 }
             }
@@ -30,6 +36,9 @@ abstract class AbstractCodeBag implements CodeBagInterface
         return $description;
     }
 
+    /**
+     * @param array<class-string> $codeEnums
+     */
     protected function setCodeEnums(array $codeEnums): self
     {
         $this->codeEnums = $codeEnums;

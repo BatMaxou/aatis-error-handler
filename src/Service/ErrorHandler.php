@@ -2,7 +2,6 @@
 
 namespace Aatis\ErrorHandler\Service;
 
-use Aatis\ErrorHandler\Interface\CodeBagInterface;
 use Psr\Log\LoggerInterface;
 use Aatis\ErrorHandler\Interface\ErrorHandlerInterface;
 
@@ -17,7 +16,7 @@ class ErrorHandler implements ErrorHandlerInterface
     ) {
     }
 
-    public static function initialize(LoggerInterface $logger, CodeBagInterface $errorCodeBag, CodeBagInterface $exceptionCodeBag): ErrorHandlerInterface
+    public static function initialize(LoggerInterface $logger, ErrorCodeBag $errorCodeBag, ExceptionCodeBag $exceptionCodeBag): self
     {
         $errorHandler = new self($logger, $errorCodeBag, $exceptionCodeBag);
 
@@ -72,6 +71,9 @@ class ErrorHandler implements ErrorHandlerInterface
         exit;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     private function render(array $data = []): void
     {
         $dataTemplate = [
@@ -90,10 +92,23 @@ class ErrorHandler implements ErrorHandlerInterface
         extract($dataTemplate);
         extract($data);
 
-        require_once __DIR__ . '/../../templates/error.tpl.php';
+        require_once __DIR__.'/../../templates/error.tpl.php';
     }
 
-    private function getTraceWithContext(string $file, int $line, array $baseTrace, $isError = false): array
+    /**
+     * @param array<array{
+     *  file?: string,
+     *  line?: int,
+     * }> $baseTrace
+     *
+     * @return array<array{
+     *  file?: string,
+     *  line?: int,
+     *  isMain?: bool,
+     *  context: array<int, string>,
+     * }>
+     */
+    private function getTraceWithContext(string $file, int $line, array $baseTrace, bool $isError = false): array
     {
         return array_filter(
             array_map(
@@ -107,6 +122,14 @@ class ErrorHandler implements ErrorHandlerInterface
         );
     }
 
+    /**
+     * @param array{
+     *  file?: string,
+     *  line?: int,
+     * } $trace
+     *
+     * @return array<int, string>|null
+     */
     private function getStepContext(array $trace): ?array
     {
         if (!isset($trace['file']) || !isset($trace['line'])) {
@@ -114,10 +137,15 @@ class ErrorHandler implements ErrorHandlerInterface
         }
 
         $traceContext = [];
-        $file = fopen($trace['file'], "r");
+        $file = fopen($trace['file'], 'r');
+
+        if (!$file) {
+            return null;
+        }
+
         $line_number = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
 
-        for ($i = 1; $i < $line_number; $i++) {
+        for ($i = 1; $i < $line_number; ++$i) {
             fgets($file);
         }
 
@@ -128,7 +156,7 @@ class ErrorHandler implements ErrorHandlerInterface
                 $traceContext[$line_number] = $line;
             }
 
-            $line_number++;
+            ++$line_number;
         }
 
         fclose($file);
