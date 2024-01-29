@@ -34,6 +34,8 @@ class ErrorHandler implements ErrorHandlerInterface
 
         $trace = $this->getTraceWithContext($file, $line, debug_backtrace(), true);
 
+        $trace = $this->replaceSpaceByTab($trace);
+
         $this->render([
             'type' => 'Error',
             'level' => $level,
@@ -55,6 +57,8 @@ class ErrorHandler implements ErrorHandlerInterface
 
         $class = $exception::class;
         $exploded = explode('\\', $class);
+
+        $trace = $this->replaceSpaceByTab($trace);
 
         $this->render([
             'type' => 'Exception',
@@ -162,5 +166,35 @@ class ErrorHandler implements ErrorHandlerInterface
         fclose($file);
 
         return $traceContext;
+    }
+
+    /**
+     * @param array<array{
+     *  file?: string,
+     *  line?: int,
+     *  isMain?: bool,
+     *  context: array<int, string>,
+     * }> $trace
+     *
+     * @return array<array{
+     *  file?: string,
+     *  line?: int,
+     *  isMain?: bool,
+     *  context: array<int, string>,
+     * }>
+     */
+    private function replaceSpaceByTab(array $trace): array
+    {
+        return array_map(
+            function ($step) {
+                $step['context'] = array_map(
+                    fn ($line) => str_replace('    ', '&nbsp&nbsp&nbsp&nbsp', $line),
+                    $step['context']
+                );
+
+                return $step;
+            },
+            $trace
+        );
     }
 }
