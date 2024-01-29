@@ -28,6 +28,7 @@
     </div>
 
     <div class="content">
+        <?php $isFirst = true; ?>
         <?php foreach ($trace as $step) {
             include __DIR__.'/components/traceStep.tpl.php';
         } ?>
