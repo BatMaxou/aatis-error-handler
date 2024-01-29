@@ -1,23 +1,21 @@
-<?php $isMain = isset($step['isMain']) && $step['isMain']; ?>
-
-<div class="trace-step <?php echo $isMain ? 'main' : ''; ?>">
+<div class="trace-step">
     <div class="trace-header">
         <div class="title">
             <?php
 
-            if ($isMain) {
+            if ('Error' !== $type && $isFirst) {
                 echo '
                     <p class="detail-text">'.($class ?? '').'</p>
-                    <p class="sub-text">'.($name ?? '').'</p>';
+                    <p class="sub-text">'.($name ?? '').'</p>
+                ';
             } else {
-                echo '
-                    <p class="sub-text">in'.($step['file'] ?? '').' (line '.($step['line'] ?? '').')</p>';
+                echo '<p class="sub-text">in'.($step['file'] ?? '').' (line '.($step['line'] ?? '').')</p>';
             }
 
-?>
+            ?>
         </div>
 
-        <div class="chevron <?php echo $isMain ? 'active' : ''; ?>">
+        <div class="chevron <?php echo $isFirst ? 'active' : ''; ?>">
             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <rect width="60" height="60" fill="url(#pattern0)" />
                 <defs>
@@ -30,9 +28,13 @@
         </div>
     </div>
 
-    <div class="trace-context <?php echo $isMain ? 'active' : ''; ?>">
+    <div class="trace-context <?php echo $isFirst ? 'active' : ''; ?>">
         <?php foreach ($step['context'] as $lineNumber => $lineContent) {
             include __DIR__.'/tracesStepLine.php';
         } ?>
     </div>
 </div>
+
+<?php if ($isFirst) {
+    $isFirst = false;
+} ?>

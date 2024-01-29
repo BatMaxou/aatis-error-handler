@@ -108,7 +108,6 @@ class ErrorHandler implements ErrorHandlerInterface
      * @return array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }>
      */
@@ -118,7 +117,7 @@ class ErrorHandler implements ErrorHandlerInterface
             array_map(
                 fn ($step) => [...$step, 'context' => $this->getStepContext($step)],
                 $isError ? $baseTrace : array_merge(
-                    [['file' => $file, 'line' => $line, 'isMain' => true]],
+                    [['file' => $file, 'line' => $line]],
                     $baseTrace
                 )
             ),
@@ -172,14 +171,12 @@ class ErrorHandler implements ErrorHandlerInterface
      * @param array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }> $trace
      *
      * @return array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }>
      */
