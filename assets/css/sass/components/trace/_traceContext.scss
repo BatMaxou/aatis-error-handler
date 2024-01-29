@@ -1,0 +1,23 @@
+.trace-context {
+    height: auto;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .5s ease-out, padding-block .4s ease-out;
+
+    .trace-line {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-inline: 20px;
+
+        &.highlighted {
+            background-color: $transparentRed;
+            border-radius: $borderRadius;
+        }
+    }
+
+    &.active {
+        padding-block: 15px;
+        max-height: 500px;
+    }
+}

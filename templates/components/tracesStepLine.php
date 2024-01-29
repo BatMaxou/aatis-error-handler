@@ -1,4 +1,4 @@
-<div class="traceLine<?php echo ($step['line'] === $lineNumber) ? ' hightlighted' : ''; ?>">
-    <p class="lineNumber"><?php echo $lineNumber; ?></p>
-    <p class="lineContent"><?php echo $lineContent; ?></p>
+<div class="trace-line<?php echo ($step['line'] === $lineNumber) ? ' highlighted' : ''; ?>">
+    <p class="line-number"><?php echo $lineNumber; ?></p>
+    <p class="line-content"><?php echo $lineContent; ?></p>
 </div>
