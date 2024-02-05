@@ -28,7 +28,7 @@ class ErrorHandler implements ErrorHandlerInterface
         return $errorHandler;
     }
 
-    public function handleError(int $level, string $message, string $file, int $line): bool
+    public function handleError(int $level, string $message, string $file, int $line): never
     {
         $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
 
@@ -49,7 +49,7 @@ class ErrorHandler implements ErrorHandlerInterface
         exit;
     }
 
-    public function handleException(\Throwable $exception): void
+    public function handleException(\Throwable $exception): never
     {
         $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
 
@@ -108,7 +108,6 @@ class ErrorHandler implements ErrorHandlerInterface
      * @return array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }>
      */
@@ -118,7 +117,7 @@ class ErrorHandler implements ErrorHandlerInterface
             array_map(
                 fn ($step) => [...$step, 'context' => $this->getStepContext($step)],
                 $isError ? $baseTrace : array_merge(
-                    [['file' => $file, 'line' => $line, 'isMain' => true]],
+                    [['file' => $file, 'line' => $line]],
                     $baseTrace
                 )
             ),
@@ -147,20 +146,20 @@ class ErrorHandler implements ErrorHandlerInterface
             return null;
         }
 
-        $line_number = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
+        $lineNumber = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
 
-        for ($i = 1; $i < $line_number; ++$i) {
+        for ($i = 1; $i < $lineNumber; ++$i) {
             fgets($file);
         }
 
-        while ($line_number < $trace['line'] + 6 && !feof($file)) {
+        while ($lineNumber < $trace['line'] + 6 && !feof($file)) {
             $line = fgets($file);
 
             if ($line) {
-                $traceContext[$line_number] = $line;
+                $traceContext[$lineNumber] = $line;
             }
 
-            ++$line_number;
+            ++$lineNumber;
         }
 
         fclose($file);
@@ -172,14 +171,12 @@ class ErrorHandler implements ErrorHandlerInterface
      * @param array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }> $trace
      *
      * @return array<array{
      *  file?: string,
      *  line?: int,
-     *  isMain?: bool,
      *  context: array<int, string>,
      * }>
      */
