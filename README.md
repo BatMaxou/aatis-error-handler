@@ -147,7 +147,7 @@ If you want to add or override any error codes from the `ExceptionCodeBag`, you 
 services:
     Aatis\ErrorHandler\Service\ExceptionCodeBag:
         arguments:
-          extraExceptionCodeEnums:
-            - 'Namespace\To\ExampleExceptionCodeEnum'
-            - 'Namespace\To\OtherExampleExceptionCodeEnum'
+            extraExceptionCodeEnums:
+                - 'Namespace\To\ExampleExceptionCodeEnum'
+                - 'Namespace\To\OtherExampleExceptionCodeEnum'
 ```
