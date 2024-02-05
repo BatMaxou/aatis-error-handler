@@ -146,20 +146,20 @@ class ErrorHandler implements ErrorHandlerInterface
             return null;
         }
 
-        $line_number = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
+        $lineNumber = ($trace['line'] - 5 <= 0) ? 1 : $trace['line'] - 5;
 
-        for ($i = 1; $i < $line_number; ++$i) {
+        for ($i = 1; $i < $lineNumber; ++$i) {
             fgets($file);
         }
 
-        while ($line_number < $trace['line'] + 6 && !feof($file)) {
+        while ($lineNumber < $trace['line'] + 6 && !feof($file)) {
             $line = fgets($file);
 
             if ($line) {
-                $traceContext[$line_number] = $line;
+                $traceContext[$lineNumber] = $line;
             }
 
-            ++$line_number;
+            ++$lineNumber;
         }
 
         fclose($file);
