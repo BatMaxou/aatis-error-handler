@@ -28,7 +28,7 @@ class ErrorHandler implements ErrorHandlerInterface
         return $errorHandler;
     }
 
-    public function handleError(int $level, string $message, string $file, int $line): bool
+    public function handleError(int $level, string $message, string $file, int $line): never
     {
         $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
 
@@ -49,7 +49,7 @@ class ErrorHandler implements ErrorHandlerInterface
         exit;
     }
 
-    public function handleException(\Throwable $exception): void
+    public function handleException(\Throwable $exception): never
     {
         $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
 
