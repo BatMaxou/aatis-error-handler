@@ -1,27 +1,33 @@
+@use 'variables' as v;
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-    background-color: $black;
-    color: $white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  background-color: v.$black;
+  color: v.$white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+
+  h1,
+  p {
     margin: 0;
     padding: 0;
+  }
 
-    h1,
-    p {
-        margin: 0;
-        padding: 0;
-    }
+  h1 {
+    font-size: 30px;
+  }
 
-    h1 {
-        font-size: 30px;
-    }
+  .sub-text {
+    font-size: 22px;
+  }
 
-    .sub-text {
-        font-size: 22px;
-    }
-
-    p {
-        font-size: 18px;
-    }
+  p {
+    font-size: 18px;
+  }
 }

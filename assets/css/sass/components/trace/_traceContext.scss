@@ -1,23 +1,33 @@
+@use '../../variables' as v;
+
 .trace-context {
-    height: auto;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .5s ease-out, padding-block .4s ease-out;
+  height: auto;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .5s ease-out;
 
-    .trace-line {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding-inline: 20px;
-
-        &.highlighted {
-            background-color: $transparentRed;
-            border-radius: $borderRadius;
-        }
+  
+  .trace-line {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-inline: 20px;
+    
+    &.highlighted {
+      background-color: v.$transparentRed;
+      border-radius: v.$borderRadius;
     }
-
-    &.active {
-        padding-block: 15px;
-        max-height: 500px;
+    
+    &:first-child {
+      margin-top: 15px;
     }
+  
+    &:last-child {
+      margin-bottom: 15px;
+    }
+  }
+
+  &.active {
+    max-height: 500px;
+  }
 }
