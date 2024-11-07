@@ -1,7 +1,6 @@
 // Basics
-@import 'variables';
-@import 'base';
-@import 'components/header';
-@import 'components/content';
-@import 'components/trace/traceHeader';
-@import 'components/trace/traceContext';
+@use 'base';
+@use 'components/header';
+@use 'components/content';
+@use 'components/trace/traceHeader';
+@use 'components/trace/traceContext';

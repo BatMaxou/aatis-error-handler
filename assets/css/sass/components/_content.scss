@@ -1,8 +1,10 @@
+@use '../variables' as v;
+
 .content {
-    background-color: $white;
-    color: $black;
-    width: $contentWidth;
-    margin-block: 40px;
-    border: 5px solid $gray;
-    border-radius: $borderRadius;
+  background-color: v.$white;
+  color: v.$black;
+  width: v.$contentWidth;
+  margin-block: 40px;
+  border: 5px solid v.$gray;
+  border-radius: v.$borderRadius;
 }

@@ -1,29 +1,31 @@
+@use '../variables' as v;
+
 .header {
-    width: 100%;
+  width: 100%;
 
-    .error-description {
-        display: flex;
-        justify-content: center;
-        background-color: $red;
-        padding-block: 20px;
-    }
+  .error-description {
+    display: flex;
+    justify-content: center;
+    background-color: v.$red;
+    padding-block: 20px;
+  }
 
-    .error-infos {
-        display: flex;
-        justify-content: center;
-        background-color: $darkRed;
-        padding-block: 10px;
-        border-bottom-left-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
-
-        .wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-    }
+  .error-infos {
+    display: flex;
+    justify-content: center;
+    background-color: v.$darkRed;
+    padding-block: 10px;
+    border-bottom-left-radius: v.$borderRadius;
+    border-bottom-right-radius: v.$borderRadius;
 
     .wrapper {
-        width: $contentWidth;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
+  }
+
+  .wrapper {
+    width: v.$contentWidth;
+  }
 }
