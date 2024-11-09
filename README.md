@@ -1,4 +1,8 @@
-# Aatis EH
+# Aatis Error Handler
+
+## About
+
+Aatis error handler displays errors and exceptions in a more user-friendly way. It also can log them if wanted.
 
 ## Installation
 
@@ -10,27 +14,30 @@ composer require aatis/error-handler
 
 ### Initialization
 
-To initialize the error handler, you need to pass the following parameters:
+To initialize the error handler, pass the following parameters to the static `initialize()` method:
 
+- an instance of `ErrorCodeBag` service of this package
+- an instance of `ExceptionCodeBag` service of this package
 - a logger service that implements the `Psr\Log\LoggerInterface`
-- an instance of `ErrorCodeBag` service of the package
-- an instance of `ExceptionCodeBag` service of the package
 
 ```php
 ErrorHandler::initialize(
-    new Logger(),
     new ErrorCodeBag(),
     new ExceptionCodeBag(),
+    new Logger(),
 );
 ```
 
-### Logger
+> [!NOTE]
+> The logger service is optional. If you do not provide it, the error handler will not log any message.
 
-Each time an error is triggered or an exception is thrown, the `ErrorHandler` will log a message with the logger service you provided.
+> [!NOTE]
+> If needed, Aatis provides a Loger that implements the `Psr\Log\LoggerInterface`.
+> See `aatis/logger` (https://github.com/BatMaxou/aatis-logger).
 
 ### ErrorCodeBag
 
-The `ErrorCodeBag` service store 15 error codes corresponding to the 15 error levels of PHP :
+`ErrorCodeBag` service store 15 error codes corresponding to the 15 error levels of PHP error:
 
 - 1 => 'E_ERROR'
 - 2 => 'E_WARNING'
@@ -48,11 +55,12 @@ The `ErrorCodeBag` service store 15 error codes corresponding to the 15 error le
 - 8192 => 'E_DEPRECATED'
 - 16384 => 'E_USER_DEPRECATED'
 
-You can not add or override any error codes from this bag.
+> [!WARNING]
+> It is not possible to override any error codes from this bag.
 
 ### ExceptionCodeBag
 
-The `ExceptionCodeBag` service store any sort of exception code you want to use in your application. By default, a list with all the 400 and 500 error codes is provided, but you can extand and/or override it :
+`ExceptionCodeBag` service store any exception code you want to use in your application. By default, a list with all the 400 and 500 exception codes is provided, but it can be extanded and/or overrided:
 
 - 0 => 'Basic Error'
 - 400 => 'Bad Request'
@@ -96,7 +104,9 @@ The `ExceptionCodeBag` service store any sort of exception code you want to use 
 - 510 => 'Not Extended'
 - 511 => 'Network Authentication Required'
 
-You can add or override any error codes from this bag by creating a custom string enum like the following template : 
+### Custom Exception Code
+
+You can add or override any exception codes by creating a custom string enum like the following template:
 
 ```php
 enum ExampleExceptionCodeEnum: string
@@ -106,9 +116,7 @@ enum ExampleExceptionCodeEnum: string
 }
 ```
 
-Then, pass it to the `ExceptionCodeBag`.
-
-*You can pass as many enums as you want into it constructor*
+Then, pass it into the `ExceptionCodeBag` service constructor.
 
 ```php
 new ExceptionCodeBag([
@@ -117,37 +125,41 @@ new ExceptionCodeBag([
 ]);
 ```
 
-To pass a specific code to an exception, you can do the following :
+> [!NOTE]
+> You can pass as many enums as you want.
+
+To precise a specific code to an exception, follow this example:
 
 ```php
-throw new Exception('My custom message', 30);
+throw new \Exception('My custom message', 30);
 ```
 
 ## With Aatis Framework
 
 ### Requirements
 
-Add the `ErrorCodeBag` and `ExceptionCodeBag` services to the `Container`:
+Add `ErrorCodeBag` and `ExceptionCodeBag` services to the `Container`:
 
 ```yaml
 # In config/services.yaml file :
 
 include_services:
-    - 'Aatis\ErrorHandler\Service\ErrorCodeBag'
-    - 'Aatis\ErrorHandler\Service\ExceptionCodeBag'  
+  - 'Aatis\ErrorHandler\Service\ErrorCodeBag'
+  - 'Aatis\ErrorHandler\Service\ExceptionCodeBag'
 ```
 
 ### ExceptionCodeBag
 
-If you want to add or override any error codes from the `ExceptionCodeBag`, you can do the following : 
+If you want to add or override any exception codes from the `ExceptionCodeBag`,
+do not forget to precise your custom enums to the `ExceptionCodeBag` service:
 
 ```yaml
 # In config/services.yaml file :
 
 services:
-    Aatis\ErrorHandler\Service\ExceptionCodeBag:
-        arguments:
-            extraExceptionCodeEnums:
-                - 'Namespace\To\ExampleExceptionCodeEnum'
-                - 'Namespace\To\OtherExampleExceptionCodeEnum'
+  Aatis\ErrorHandler\Service\ExceptionCodeBag:
+    arguments:
+      extraExceptionCodeEnums:
+        - 'Namespace\To\ExampleExceptionCodeEnum'
+        - 'Namespace\To\OtherExampleExceptionCodeEnum'
 ```

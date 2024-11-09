@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 
 interface ErrorHandlerInterface
 {
-    public static function initialize(LoggerInterface $loggerInterface, ErrorCodeBag $errorCodeBag, ExceptionCodeBag $exceptionCodeBag): ErrorHandlerInterface;
+    public static function initialize(ErrorCodeBag $errorCodeBag, ExceptionCodeBag $exceptionCodeBag, ?LoggerInterface $loggerInterface): ErrorHandlerInterface;
 
     public function handleError(int $level, string $message, string $file, int $line): bool;
 
