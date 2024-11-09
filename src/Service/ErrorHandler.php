@@ -10,15 +10,15 @@ class ErrorHandler implements ErrorHandlerInterface
     private const LOG_PATERN = '[%s] %s - %s:%s';
 
     public function __construct(
-        private readonly LoggerInterface $logger,
         private readonly ErrorCodeBag $errorCodeBag,
         private readonly ExceptionCodeBag $exceptionCodeBag,
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
-    public static function initialize(LoggerInterface $logger, ErrorCodeBag $errorCodeBag, ExceptionCodeBag $exceptionCodeBag): self
+    public static function initialize(ErrorCodeBag $errorCodeBag, ExceptionCodeBag $exceptionCodeBag, ?LoggerInterface $logger = null): self
     {
-        $errorHandler = new self($logger, $errorCodeBag, $exceptionCodeBag);
+        $errorHandler = new self($errorCodeBag, $exceptionCodeBag, $logger);
 
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
@@ -30,7 +30,9 @@ class ErrorHandler implements ErrorHandlerInterface
 
     public function handleError(int $level, string $message, string $file, int $line): never
     {
-        $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
+        if ($this->logger) {
+            $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
+        }
 
         $trace = $this->getTraceWithContext($file, $line, debug_backtrace(), true);
 
@@ -51,7 +53,9 @@ class ErrorHandler implements ErrorHandlerInterface
 
     public function handleException(\Throwable $exception): never
     {
-        $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
+        if ($this->logger) {
+            $this->logger->error(sprintf(self::LOG_PATERN, (string) $exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
+        }
 
         $trace = $this->getTraceWithContext($exception->getFile(), $exception->getLine(), $exception->getTrace());
 
