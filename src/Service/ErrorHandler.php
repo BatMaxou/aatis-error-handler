@@ -2,8 +2,8 @@
 
 namespace Aatis\ErrorHandler\Service;
 
-use Psr\Log\LoggerInterface;
 use Aatis\ErrorHandler\Interface\ErrorHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class ErrorHandler implements ErrorHandlerInterface
 {
