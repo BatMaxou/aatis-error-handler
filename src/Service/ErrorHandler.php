@@ -22,8 +22,8 @@ class ErrorHandler implements ErrorHandlerInterface
 
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
-        set_error_handler([$errorHandler, 'handleError']);
-        set_exception_handler([$errorHandler, 'handleException']);
+        set_error_handler($errorHandler->handleError(...));
+        set_exception_handler($errorHandler->handleException(...));
 
         return $errorHandler;
     }
@@ -31,11 +31,15 @@ class ErrorHandler implements ErrorHandlerInterface
     public function handleError(int $level, string $message, string $file, int $line): never
     {
         if ($this->logger) {
-            $this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
+            try {
+                // Silent warning / failure
+                @$this->logger->error(sprintf(self::LOG_PATERN, $level, $message, $file, $line));
+            } catch (\Throwable) {
+                // Do nothing in case of logging warning / failure
+            }
         }
 
         $trace = $this->getTraceWithContext($file, $line, debug_backtrace(), true);
-
         $trace = $this->replaceSpaceByTab($trace);
 
         $this->render([
